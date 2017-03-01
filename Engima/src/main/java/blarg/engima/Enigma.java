@@ -28,26 +28,12 @@ public class Enigma {
         posRot3 = three;
     }
     
-    /**
-     * Shift value of position to within range 0 to 25 (inclusive)
-     * For example, 26 will return 1, -2 will return 24
-     * @param position Current value of position
-     * @return position if position is within [0, 25], otherwise shift to within that range
-     */
-    private int rollPosition(int position) {
-        int rolledPosition = position % 26;// Ugly magic number
-            
-        if (rolledPosition < 0) {
-            rolledPosition += 26;// Ugly magic number
-        }
-        return rolledPosition;
-    }
-    
     public String encrypt(String plaintext) {
         String output = "";
         
         for (char ch : plaintext.toCharArray()) {
-            posRot3++;
+            
+            turnRotors();
             
             // Get in "index" of the input
             int rotor3FirstInput = ch - 'A';
@@ -81,5 +67,38 @@ public class Enigma {
             output += (char) (rotor3SecondOutput + 'A');            
         }        
         return output;
+    }
+    
+    /**
+     * Shift value of position to within range 0 to 25 (inclusive)
+     * For example, 26 will return 1, -2 will return 24
+     * @param position Current value of position
+     * @return position if position is within [0, 25], otherwise shift to within that range
+     */
+    private int rollPosition(int position) {
+        int rolledPosition = position % 26;// Ugly magic number
+            
+        if (rolledPosition < 0) {
+            rolledPosition += 26;// Ugly magic number
+        }
+        return rolledPosition;
+    }
+    
+    private void turnRotors() {
+        posRot3++;
+            
+        if (posRot3 > 25) { // Ugly magic number
+            posRot2++;
+            posRot3 = 0;
+        }
+
+        if (posRot2 > 25) { // Ugly magic number
+            posRot1++;
+            posRot2 = 0;
+        }
+
+        if (posRot1 > 25) { // Ugly magic number
+            posRot1 = 0;
+        }
     }
 }
