@@ -15,11 +15,30 @@ public class EnigmaTest {
         enigma = new Enigma();
     }
     
-    // M3, Reflector B, rotors I, II, III, code A, A, A, and then A A A
+    // Reflector B, rotors I, II, III, code A, A, A
     @Test
-    public void testEcrypt_whenM3RefBDefaultRotors_shouldReturnCiphertext() {
+    public void testEncrypt_whenRotorsAAA_shouldReturnCiphertext() {
+        enigma.setRotorPositions(('A' - 'A'), ('A' - 'A'), ('A' - 'A'));
         String plaintext = "AAAA";
         String expectedCiphertext = "BDZG";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code E, H, K
+    @Test
+    public void testEncrypt_whenRotorsEHK_shouldReturnCiphertext() {
+        enigma.setRotorPositions(('E' - 'A'), ('H' - 'A'), ('K' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "OQNU";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code T, B, C
+    @Test
+    public void testEncrypt_whenRotorsTBY_shouldReturnCiphertext() {
+        enigma.setRotorPositions(('T' - 'A'), ('B' - 'A'), ('C' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "NMIQ";
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
     

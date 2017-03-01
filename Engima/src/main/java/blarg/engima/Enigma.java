@@ -12,17 +12,37 @@ public class Enigma {
     String rotor3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
     String reflectorB = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
     
-    int posRot1 = 0;
-    int posRot2 = 0;
-    int posRot3 = 0;
+    int posRot1;
+    int posRot2;
+    int posRot3;
     
     public Enigma() {
-        
+        posRot1 = 0;
+        posRot2 = 0;
+        posRot3 = 0;
     }
     
-    /* Problems I've ran into so far
-    * This can't handle rolling backwards so like -1 trips it up, input four As on AAA default to recreate: fixed for one rotor rolling under, might also roll over and/or affect other rotors
-    */
+    public void setRotorPositions(int one, int two, int three) {
+        posRot1 = one;
+        posRot2 = two;
+        posRot3 = three;
+    }
+    
+    /**
+     * Shift value of position to within range 0 to 25 (inclusive)
+     * For example, 26 will return 1, -2 will return 24
+     * @param position Current value of position
+     * @return position if position is within [0, 25], otherwise shift to within that range
+     */
+    private int rollPosition(int position) {
+        int rolledPosition = position % 26;// Ugly magic number
+            
+        if (rolledPosition < 0) {
+            rolledPosition += 26;// Ugly magic number
+        }
+        return rolledPosition;
+    }
+    
     public String encrypt(String plaintext) {
         String output = "";
         
@@ -30,39 +50,36 @@ public class Enigma {
             posRot3++;
             
             // Get in "index" of the input
-            int rotor3Input = ch - 'A';
+            int rotor3FirstInput = ch - 'A';
             // Then adjust for the rotation and get the output, and then unadjust for rotation (the -'A' is just because ASCII)
-            int rotor3Output = rotor3.charAt(rotor3Input + posRot3) - 'A' - posRot3;
+            int rotor3FirstOutput = rotor3.charAt(rotor3FirstInput + posRot3) - 'A' - posRot3;            
+            rotor3FirstOutput = rollPosition(rotor3FirstOutput);// Keep in mind the these Output values are the absolute index of the output
             
-            int rotor2Output = rotor2.charAt(rotor3Output + posRot2) - 'A' - posRot2;
-
-            int rotor1Output = rotor1.charAt(rotor2Output + posRot1) - 'A' - posRot1;
+            int rotor2FirstInput = rollPosition(rotor3FirstOutput + posRot2);                        
+            int rotor2FirstOutput = rotor2.charAt(rotor2FirstInput) - 'A' - posRot2;            
+            rotor2FirstOutput = rollPosition(rotor2FirstOutput);
             
-            int reflectorOutput = reflectorB.charAt(rotor1Output) - 'A';
+            int rotor1FirstInput = rollPosition(rotor2FirstOutput + posRot1);            
+            int rotor1FirstOutput = rotor1.charAt(rotor1FirstInput) - 'A' - posRot1;
+            rotor1FirstOutput = rollPosition(rotor1FirstOutput);    
             
-            //output = "" + (char) rotor1Output;
+            int reflectorOutput = reflectorB.charAt(rotor1FirstOutput) - 'A';            
+            reflectorOutput = rollPosition(reflectorOutput);
             
-            int rotor1Return = rotor1.indexOf(reflectorOutput + 'A' + posRot1) - posRot1;
-            int rotor2Return = rotor2.indexOf(rotor1Return + 'A' + posRot2) - posRot2;
-            int rotor3Return = rotor3.indexOf(rotor2Return + 'A' + posRot3) - posRot3;
+            int rotor1SecondInput = rollPosition(reflectorOutput + posRot1) + 'A';// Now go through the rotors in reverse, so look up the letter within the string            
+            int rotor1SecondOutput = rotor1.indexOf(rotor1SecondInput) - posRot1;
+            rotor1SecondOutput = rollPosition(rotor1SecondOutput);            
             
-            /* Ugly fix for rolling into negative numbers
-            So if rotor 3 is in position D, with everything else default, then you get a C back from the middle
-            This then gets turned into a C while going backwards through 3
-            But C is above D, so the "index" is -1
-            This breaks things in my code.  I suspect it could break things for the other rotors as well but haven't tested that yet
-            Modulo to get within range -25 to 25, then if negative add it to 26 to get the rolled under value            
-            */
-            int mod = rotor3Return % 26;// Ugly magic number
+            int rotor2SecondInput = rollPosition(rotor1SecondOutput + posRot2) + 'A';            
+            int rotor2SecondOutput = rotor2.indexOf(rotor2SecondInput) - posRot2;
+            rotor2SecondOutput = rollPosition(rotor2SecondOutput);
             
-            if (mod < 0) {
-                rotor3Return = 26 + mod;// Ugly magic number
-            }
+            int rotor3SecondInput = rollPosition(rotor2SecondOutput + posRot3) + 'A';            
+            int rotor3SecondOutput = rotor3.indexOf(rotor3SecondInput) - posRot3;            
+            rotor3SecondOutput = rollPosition(rotor3SecondOutput);
             
-            output += (char) (rotor3Return + 'A');
-            
-        }
-        
+            output += (char) (rotor3SecondOutput + 'A');            
+        }        
         return output;
     }
 }
