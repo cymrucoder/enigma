@@ -11,8 +11,8 @@ import java.util.List;
 public class Rotor {
     private final String cipher;
     private int position;
-    List<Integer> rightToLeftShifts;
-    List<Integer> leftToRightShifts;
+    private List<Integer> rightToLeftShifts;
+    private List<Integer> leftToRightShifts;
     
     public Rotor(String cipher) {
         this.cipher = cipher.toUpperCase();
@@ -58,6 +58,7 @@ public class Rotor {
     public boolean rotate() {
         position++;
         if (position > 25) { //TODO Ugly magic number
+            position = 0;
             return true;
         }
         return false;
