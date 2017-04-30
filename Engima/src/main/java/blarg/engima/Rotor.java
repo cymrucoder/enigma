@@ -1,6 +1,7 @@
 package blarg.engima;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,7 +11,8 @@ import java.util.List;
 public class Rotor {
     private final String cipher;
     private int position;
-    List<Integer> shifts;
+    List<Integer> rightToLeftShifts;
+    List<Integer> leftToRightShifts;
     
     /*
     
@@ -33,24 +35,33 @@ public class Rotor {
     
     public Rotor(String cipher) {
         this.cipher = cipher.toUpperCase();
-        shifts = new ArrayList<>();
-        
-        char plaintext = 'A';
+        rightToLeftShifts = new ArrayList<>();
+        leftToRightShifts = new ArrayList<>(Collections.nCopies(cipher.length(), 0));
+                
+        //char plaintext = 'A';
+        //int i = 0;
         
         // So BDFHJLC...
         // First char is B, plaintext A, B-A -> 1
         // At C, plaintext is G, C-G -> -4
         
-        for (char ch : cipher.toCharArray()) {
-            shifts.add(ch - plaintext);
-            plaintext++;
+        //for (char ch : cipher.toCharArray()) {
+        //    rightToLeftShifts.add(ch - plaintext);
+        //    plaintext++;
+        //}
+        
+        for (int i = 0; i < cipher.length(); i++) {
+            int shift = cipher.charAt(i) - ('A' + i);
+            rightToLeftShifts.add(shift);
+            leftToRightShifts.set(i, shift * -1);
         }
         
         position = 0;
     }
     
     public int getLeftForRight(int rightIndex) {
-        return 0;
+        int leftIndex = rollPosition(rightIndex + rightToLeftShifts.get(rollPosition(rightIndex + position)));
+        return leftIndex;
     }
     
     public int getRightForLeft(int leftIndex) {
@@ -72,5 +83,20 @@ public class Rotor {
      */
     public boolean rotate() {
         return false;
+    }
+    
+    /**
+     * Shift value of position to within range 0 to 25 (inclusive)
+     * For example, 26 will return 1, -2 will return 24
+     * @param position Current value of position
+     * @return position if position is within [0, 25], otherwise shift to within that range
+     */
+    private int rollPosition(int position) {
+        int rolledPosition = position % 26;// Ugly magic number
+            
+        if (rolledPosition < 0) {
+            rolledPosition += 26;// Ugly magic number
+        }
+        return rolledPosition;
     }
 }
