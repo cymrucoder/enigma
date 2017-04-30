@@ -6,26 +6,40 @@ package blarg.engima;
  */
 public class Enigma {
     
-    // Ugly implementation with letters
-    String rotor1 = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-    String rotor2 = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
-    String rotor3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
-    String reflectorB = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+    private static final String ROTOR_ONE = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+    private static final String ROTOR_TWO = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
+    private static final String ROTOR_THREE = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
+    private static final String REFLECTOR_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
     
-    int posRot1;
-    int posRot2;
-    int posRot3;
+    private Rotor[] rotors = new Rotor[3];    
+    private Rotor[] setRotors = new Rotor[3];
+    
+    private Rotor reflectorB;// Reflector is just a special case of rotor.  Don't rotate it and only get right to left.
     
     public Enigma() {
-        posRot1 = 0;
-        posRot2 = 0;
-        posRot3 = 0;
+        rotors[0] = new Rotor(ROTOR_ONE);
+        rotors[1] = new Rotor(ROTOR_TWO);
+        rotors[2] = new Rotor(ROTOR_THREE);
+        
+        setRotors[0] = rotors[0];
+        setRotors[1] = rotors[1];
+        setRotors[2] = rotors[2];
+        
+        reflectorB = new Rotor(REFLECTOR_B);
     }
     
-    public void setRotorPositions(int one, int two, int three) {
-        posRot1 = one;
-        posRot2 = two;
-        posRot3 = three;
+    public void setRotors(int left, int middle, int right) {
+        // TODO what if you swap rotors while they are already rotated?
+        setRotors[0] = rotors[left - 1];
+        setRotors[1] = rotors[middle - 1];
+        setRotors[2] = rotors[right - 1];
+    }
+    
+    public void setRotorRotations(int one, int two, int three) {
+        // These argument names are terrible
+        setRotors[0].setPosition(one);
+        setRotors[1].setPosition(two);
+        setRotors[2].setPosition(three);
     }
     
     public String encrypt(String plaintext) {
@@ -37,68 +51,27 @@ public class Enigma {
             
             // Get in "index" of the input
             int rotor3FirstInput = ch - 'A';
-            // Then adjust for the rotation and get the output, and then unadjust for rotation (the -'A' is just because ASCII)
-            int rotor3FirstOutput = rotor3.charAt(rotor3FirstInput + posRot3) - 'A' - posRot3;            
-            rotor3FirstOutput = rollPosition(rotor3FirstOutput);// Keep in mind the these Output values are the absolute index of the output
             
-            int rotor2FirstInput = rollPosition(rotor3FirstOutput + posRot2);                        
-            int rotor2FirstOutput = rotor2.charAt(rotor2FirstInput) - 'A' - posRot2;            
-            rotor2FirstOutput = rollPosition(rotor2FirstOutput);
+            int rotor3FirstOutput = setRotors[2].getLeftForRight(rotor3FirstInput);
+            int rotor2FirstOutput = setRotors[1].getLeftForRight(rotor3FirstOutput);
+            int rotor1FirstOutput = setRotors[0].getLeftForRight(rotor2FirstOutput);
             
-            int rotor1FirstInput = rollPosition(rotor2FirstOutput + posRot1);            
-            int rotor1FirstOutput = rotor1.charAt(rotor1FirstInput) - 'A' - posRot1;
-            rotor1FirstOutput = rollPosition(rotor1FirstOutput);    
+            int reflectorOutput = reflectorB.getLeftForRight(rotor1FirstOutput);
             
-            int reflectorOutput = reflectorB.charAt(rotor1FirstOutput) - 'A';            
-            reflectorOutput = rollPosition(reflectorOutput);
-            
-            int rotor1SecondInput = rollPosition(reflectorOutput + posRot1) + 'A';// Now go through the rotors in reverse, so look up the letter within the string            
-            int rotor1SecondOutput = rotor1.indexOf(rotor1SecondInput) - posRot1;
-            rotor1SecondOutput = rollPosition(rotor1SecondOutput);            
-            
-            int rotor2SecondInput = rollPosition(rotor1SecondOutput + posRot2) + 'A';            
-            int rotor2SecondOutput = rotor2.indexOf(rotor2SecondInput) - posRot2;
-            rotor2SecondOutput = rollPosition(rotor2SecondOutput);
-            
-            int rotor3SecondInput = rollPosition(rotor2SecondOutput + posRot3) + 'A';            
-            int rotor3SecondOutput = rotor3.indexOf(rotor3SecondInput) - posRot3;            
-            rotor3SecondOutput = rollPosition(rotor3SecondOutput);
+            int rotor1SecondOutput = setRotors[0].getRightForLeft(reflectorOutput);
+            int rotor2SecondOutput = setRotors[1].getRightForLeft(rotor1SecondOutput);
+            int rotor3SecondOutput = setRotors[2].getRightForLeft(rotor2SecondOutput);
             
             output += (char) (rotor3SecondOutput + 'A');            
         }        
         return output;
     }
     
-    /**
-     * Shift value of position to within range 0 to 25 (inclusive)
-     * For example, 26 will return 1, -2 will return 24
-     * @param position Current value of position
-     * @return position if position is within [0, 25], otherwise shift to within that range
-     */
-    private int rollPosition(int position) {
-        int rolledPosition = position % 26;// Ugly magic number
-            
-        if (rolledPosition < 0) {
-            rolledPosition += 26;// Ugly magic number
-        }
-        return rolledPosition;
-    }
-    
     private void turnRotors() {
-        posRot3++;
-            
-        if (posRot3 > 25) { // Ugly magic number
-            posRot2++;
-            posRot3 = 0;
-        }
-
-        if (posRot2 > 25) { // Ugly magic number
-            posRot1++;
-            posRot2 = 0;
-        }
-
-        if (posRot1 > 25) { // Ugly magic number
-            posRot1 = 0;
+        if (setRotors[2].rotate()) {
+            if (setRotors[1].rotate()) {
+                setRotors[0].rotate();
+            }
         }
     }
 }
