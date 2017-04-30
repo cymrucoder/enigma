@@ -14,46 +14,19 @@ public class Rotor {
     List<Integer> rightToLeftShifts;
     List<Integer> leftToRightShifts;
     
-    /*
-    
-    ABCDEFGHIJKLMNOPQRSTUVWXYZ
-    BDFHJLCPRTXCZNYEIWGAKMUSQO
-    
-    //Position 0 (A)
-    getLFR(0) = 1
-    getLFR(1) = 3
-    getRFL(0) = 19
-    getRFL(1) = 0
-    
-    //Position 1 (B)
-    gLFR(0) = 2
-    gLFR(1) = 4
-    gRFL(0) = 25
-    gRFL(1) = 5
-    
-    */
-    
     public Rotor(String cipher) {
         this.cipher = cipher.toUpperCase();
         rightToLeftShifts = new ArrayList<>();
         leftToRightShifts = new ArrayList<>(Collections.nCopies(cipher.length(), 0));
                 
-        //char plaintext = 'A';
-        //int i = 0;
-        
         // So BDFHJLC...
         // First char is B, plaintext A, B-A -> 1
         // At C, plaintext is G, C-G -> -4
         
-        //for (char ch : cipher.toCharArray()) {
-        //    rightToLeftShifts.add(ch - plaintext);
-        //    plaintext++;
-        //}
-        
         for (int i = 0; i < cipher.length(); i++) {
             int shift = cipher.charAt(i) - ('A' + i);
             rightToLeftShifts.add(shift);
-            leftToRightShifts.set(i, shift * -1);
+            leftToRightShifts.set(i + shift, shift * -1);
         }
         
         position = 0;
@@ -65,7 +38,8 @@ public class Rotor {
     }
     
     public int getRightForLeft(int leftIndex) {
-        return 0;
+        int rightIndex = rollPosition(leftIndex + leftToRightShifts.get(rollPosition(leftIndex + position)));
+        return rightIndex;
     }
     
     /**
@@ -82,6 +56,10 @@ public class Rotor {
      * @return true if this should trigger the next rotor to rotate.
      */
     public boolean rotate() {
+        position++;
+        if (position > 25) { //TODO Ugly magic number
+            return true;
+        }
         return false;
     }
     

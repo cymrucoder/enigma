@@ -1,10 +1,5 @@
-
 package blarg.engima;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -74,6 +69,38 @@ public class RotorTest {
         rotor.setPosition(5);
         int expectedIndex = 23;
         int actualIndex = rotor.getLeftForRight(1);
+        assertEquals(expectedIndex, actualIndex);
+    }
+    
+    @Test
+    public void testGetRightForLeft_whenPosition0Index0_shouldReturnIndex19() {
+        rotor.setPosition(0);
+        int expectedIndex = 19;
+        int actualIndex = rotor.getRightForLeft(0);
+        assertEquals(expectedIndex, actualIndex);
+    }
+    
+    @Test
+    public void testGetRightForLeft_whenPosition0Index1_shouldReturnIndex0() {
+        rotor.setPosition(0);
+        int expectedIndex = 0;
+        int actualIndex = rotor.getRightForLeft(1);
+        assertEquals(expectedIndex, actualIndex);
+    }
+    
+    @Test
+    public void testGetRightForLeft_whenPosition1Index0_shouldReturnIndex25() {
+        rotor.setPosition(1);
+        int expectedIndex = 25;
+        int actualIndex = rotor.getRightForLeft(0);
+        assertEquals(expectedIndex, actualIndex);
+    }
+    
+    @Test
+    public void testGetRightForLeft_whenPosition1Index1_shouldReturnIndex5() {
+        rotor.setPosition(1);
+        int expectedIndex = 5;
+        int actualIndex = rotor.getRightForLeft(1);
         assertEquals(expectedIndex, actualIndex);
     }
 }
