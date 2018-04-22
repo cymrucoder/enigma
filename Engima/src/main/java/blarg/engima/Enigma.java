@@ -9,18 +9,20 @@ import java.util.Map;
  */
 public class Enigma {
     
-    private static final String REFLECTOR_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+    private static final String REFLECTOR_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT";// I'm not really happy with this being default but it will do for now
     
     private Map<String, Rotor> rotors;
     private Map<Integer, String> setRotors;
     
-    private Rotor reflectorB;// Reflector is just a special case of rotor.  Don't rotate it and only get right to left.
+    private Rotor reflector;// Reflector is just a special case of rotor.  Don't rotate it and only get right to left.
+    // But that means calling it "Rotor" isn't correct.  It should be more generally called "Cipher" or something
+    // TODO Think about it.
     
     public Enigma() {
         rotors = new HashMap<>();
         setRotors = new HashMap<>();
         
-        reflectorB = new Rotor(REFLECTOR_B);
+        reflector = new Rotor(REFLECTOR_B);
     }
     
     public void addRotor(String name, String cipher) {
@@ -45,6 +47,10 @@ public class Enigma {
         rotors.get(setRotors.get(index)).setPosition(position);
     }
     
+    public void setReflector(String cipher) {
+        reflector = new Rotor(cipher);
+    }
+    
     public String encrypt(String plaintext) {
         String output = "";
         
@@ -59,12 +65,15 @@ public class Enigma {
                 tracker = ((Rotor) rotors.get(setRotors.get(i))).getLeftForRight(tracker);
             }
             
-            tracker = reflectorB.getLeftForRight(tracker);
+            if (reflector != null) {// I'm not sure an actual Enigma can operate without the reflector but whatever
+                tracker = reflector.getLeftForRight(tracker);
+            }
             
             for (int i = 0; i < setRotors.size(); i++) {
                 tracker = ((Rotor) rotors.get(setRotors.get(i))).getRightForLeft(tracker);
             }
-            
+
+            // Revert number back to letter and add to output
             output += (char) (tracker + 'A');            
         }        
         return output;

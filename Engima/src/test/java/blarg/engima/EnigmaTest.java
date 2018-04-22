@@ -14,6 +14,9 @@ public class EnigmaTest {
     private static final String ROTOR_TWO = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
     private static final String ROTOR_THREE = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
     
+    private static final String REFLECTOR_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+    private static final String REFLECTOR_C = "FVPJIAOYEDRZXWGCTKUQSBNMHL";
+    
     public EnigmaTest() {
         enigma = new Enigma();
         enigma.addRotor("I", ROTOR_ONE);
@@ -29,6 +32,17 @@ public class EnigmaTest {
         enigma.setRotorRotation(0, firstPosition);
         enigma.setRotorRotation(1, secondPosition);
         enigma.setRotorRotation(2, thirdPosition);
+    }
+    
+    private void setupEnigma(String firstRotor, String secondRotor, String thirdRotor, int firstPosition, int secondPosition, int thirdPosition, String reflector) {
+        enigma.clearRotors();
+        enigma.setRotor(0, firstRotor);
+        enigma.setRotor(1, secondRotor);
+        enigma.setRotor(2, thirdRotor);
+        enigma.setRotorRotation(0, firstPosition);
+        enigma.setRotorRotation(1, secondPosition);
+        enigma.setRotorRotation(2, thirdPosition);
+        enigma.setReflector(reflector);
     }
     
     // Reflector B, rotors I, II, III, code A, A, A
@@ -109,6 +123,15 @@ public class EnigmaTest {
         setupEnigma("III", "I", "II", ('Z' - 'A'), ('Z' - 'A'), ('X' - 'A'));
         String plaintext = "AAAA";
         String expectedCiphertext = "ZUJC";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector C, rotors I, II, III, code A, A, A
+    @Test
+    public void testEncrypt_whenRotorsAAAReflectorC_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0, REFLECTOR_C);        
+        String plaintext = "AAAA";
+        String expectedCiphertext = "PJBU";
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
 }
