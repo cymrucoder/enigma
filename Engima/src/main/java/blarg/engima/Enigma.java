@@ -13,6 +13,7 @@ public class Enigma {
     
     private Map<String, Rotor> rotors;
     private Map<Integer, String> setRotors;
+    private Plugboard plugboard;
     
     private Rotor reflector;// Reflector is just a special case of rotor.  Don't rotate it and only get right to left.
     // But that means calling it "Rotor" isn't correct.  It should be more generally called "Cipher" or something
@@ -23,6 +24,8 @@ public class Enigma {
         setRotors = new HashMap<>();
         
         reflector = new Rotor(REFLECTOR_B);
+        
+        plugboard = new Plugboard();
     }
     
     public void addRotor(String name, String cipher) {
@@ -51,6 +54,14 @@ public class Enigma {
         reflector = new Rotor(cipher);
     }
     
+    public void connectPlugboard(int firstPlugIndex, int secondPlugIndex) {
+        plugboard.connect(firstPlugIndex, secondPlugIndex);
+    }
+    
+    public void clearPlugboard() {
+        plugboard.clear();
+    }
+    
     public String encrypt(String plaintext) {
         String output = "";
         
@@ -60,6 +71,8 @@ public class Enigma {
             
             // Get in "index" of the input
             int tracker = ch - 'A';
+            
+            tracker = plugboard.convert(tracker);
             
             for (int i = setRotors.size() - 1; i >= 0; i--) {
                 tracker = ((Rotor) rotors.get(setRotors.get(i))).getLeftForRight(tracker);
@@ -73,6 +86,8 @@ public class Enigma {
                 tracker = ((Rotor) rotors.get(setRotors.get(i))).getRightForLeft(tracker);
             }
 
+            tracker = plugboard.convert(tracker);
+            
             // Revert number back to letter and add to output
             output += (char) (tracker + 'A');            
         }        
