@@ -12,8 +12,7 @@ public class RotorTest {
     Rotor rotor;
     
     public RotorTest() {
-        rotor = new Rotor("BDFHJLCPRTXVZNYEIWGAKMUSQO");
-        
+        rotor = new Rotor("BDFHJLCPRTXVZNYEIWGAKMUSQO");        
     }
 
     @Test

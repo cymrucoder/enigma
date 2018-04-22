@@ -129,9 +129,51 @@ public class EnigmaTest {
     // Reflector C, rotors I, II, III, code A, A, A
     @Test
     public void testEncrypt_whenRotorsAAAReflectorC_shouldReturnCiphertext() {
-        setupEnigma("I", "II", "III", 0, 0, 0, REFLECTOR_C);        
+        setupEnigma("I", "II", "III", 0, 0, 0, REFLECTOR_C);
         String plaintext = "AAAA";
         String expectedCiphertext = "PJBU";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector C, rotors I, II, III, code A, A, A, plugboard AB
+    @Test
+    public void testEncrypt_whenRotorsAAAPlugboardAB_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0, REFLECTOR_B);
+        enigma.connectPlugboard(('A' - 'A'), ('B' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "BJLC";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector C, rotors I, II, III, code A, A, A, plugboard AB,CJ,TV,ER,IF,QM,WL
+    @Test
+    public void testEncrypt_whenRotorsAAAPlugboardCJTVER_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0, REFLECTOR_B);
+        enigma.connectPlugboard(('A' - 'A'), ('B' - 'A'));
+        enigma.connectPlugboard(('C' - 'A'), ('J' - 'A'));
+        enigma.connectPlugboard(('T' - 'A'), ('V' - 'A'));
+        enigma.connectPlugboard(('E' - 'A'), ('R' - 'A'));
+        enigma.connectPlugboard(('I' - 'A'), ('F' - 'A'));
+        enigma.connectPlugboard(('Q' - 'A'), ('M' - 'A'));
+        enigma.connectPlugboard(('W' - 'A'), ('L' - 'A'));
+        String plaintext = "RAWR";// Wanted to test a few different input letters for plugboard
+        String expectedCiphertext = "ICAL";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector C, rotors I, II, III, code A, A, A, plugboard AB then changed to AC
+    // Test whether disconnecting works properly
+    @Test
+    public void testEncrypt_whenRotorsAAAPlugboardChanged_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0, REFLECTOR_B);
+        enigma.connectPlugboard(('A' - 'A'), ('B' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "BJLC";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+                
+        enigma.connectPlugboard(('A' - 'A'), ('C' - 'A'));
+        plaintext = "AAAA";
+        expectedCiphertext = "NMCJ";// Remember that the rotors have already turned four times before doing this!  Because I forgot it before ;)
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
 }
