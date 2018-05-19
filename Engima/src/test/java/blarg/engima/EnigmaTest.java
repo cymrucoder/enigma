@@ -176,4 +176,44 @@ public class EnigmaTest {
         expectedCiphertext = "NMCJ";// Remember that the rotors have already turned four times before doing this!  Because I forgot it before ;)
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
+    
+    // Reflector B, rotors I, II, III, code A, A, A, ring AAA
+    @Test
+    public void testEncrypt_whenRotorsAAARingAAA_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0);        
+        String plaintext = "AAAA";
+        String expectedCiphertext = "BDZG";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code A, A, A, ring AAB
+    @Test
+    public void testEncrypt_whenRotorsAAARingAAB_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0);
+        enigma.setRotorRingSetting(2, 'B' - 'A');
+        String plaintext = "AAAA";
+        String expectedCiphertext = "UBDZ";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code A, A, A, ring AAZ
+    @Test
+    public void testEncrypt_whenRotorsAAARingAAZ_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0);
+        //enigma.setRotorRingSetting(0, 'A' - 'A');
+        //enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(2, 'Z' - 'A');
+        String plaintext = "AAAA";
+        String expectedCiphertext = "DZGO";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code E, H, K
+    //@Test
+    public void testEncrypt_whenRotorsEHKRingABC_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", ('E' - 'A'), ('H' - 'A'), ('K' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "QRNQ";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
 }

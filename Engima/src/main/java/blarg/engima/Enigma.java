@@ -50,6 +50,10 @@ public class Enigma {
         rotors.get(setRotors.get(index)).setPosition(position);
     }
     
+    public void setRotorRingSetting(int index, int position) {
+        rotors.get(setRotors.get(index)).setRingSetting(position);
+    }
+    
     public void setReflector(String cipher) {
         reflector = new Rotor(cipher);
     }

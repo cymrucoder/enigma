@@ -13,6 +13,7 @@ public class Rotor {
     private int position;
     private List<Integer> rightToLeftShifts;
     private List<Integer> leftToRightShifts;
+    private int ringSetting = 0;
     
     public Rotor(String cipher) {
         this.cipher = cipher.toUpperCase();
@@ -33,12 +34,12 @@ public class Rotor {
     }
     
     public int getLeftForRight(int rightIndex) {
-        int leftIndex = rollPosition(rightIndex + rightToLeftShifts.get(rollPosition(rightIndex + position)));
+        int leftIndex = rollPosition(rightIndex + rightToLeftShifts.get(rollPosition(rightIndex + position - ringSetting)));
         return leftIndex;
     }
     
     public int getRightForLeft(int leftIndex) {
-        int rightIndex = rollPosition(leftIndex + leftToRightShifts.get(rollPosition(leftIndex + position)));
+        int rightIndex = rollPosition(leftIndex + leftToRightShifts.get(rollPosition(leftIndex + position - ringSetting)));
         return rightIndex;
     }
     
@@ -49,6 +50,10 @@ public class Rotor {
      */
     public void setPosition(int position) {
         this.position = position % cipher.length();
+    }
+    
+    public void setRingSetting(int position) {
+        this.ringSetting = position;
     }
     
     /**
