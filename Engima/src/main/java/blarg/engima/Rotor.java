@@ -50,6 +50,7 @@ public class Rotor {
 //        System.out.println("roleld total is " + rollTotal + "\n\n\n");
 //        //int leftIndex = rollPosition(rightIndex + position - ringSetting + rightToLeftShifts.get(rollPosition(rightIndex + position - ringSetting)));
 //        int leftIndex = rollTotal;
+// This is missing the rightindex+position+ringsetting at the start in the uncommented one which I think is correct but breaks tests
         return leftIndex;
     }
     
