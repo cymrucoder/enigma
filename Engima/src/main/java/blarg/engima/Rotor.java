@@ -14,6 +14,7 @@ public class Rotor {
     private List<Integer> rightToLeftShifts;
     private List<Integer> leftToRightShifts;
     private int ringSetting = 0;
+    private int turnoverPoint;
     
     public Rotor(String cipher) {
         this.cipher = cipher.toUpperCase();
@@ -31,10 +32,24 @@ public class Rotor {
         }
         
         position = 0;
+        turnoverPoint = cipher.length() - 1;// If not specified, turnover will be at end of loop
     }
     
     public int getLeftForRight(int rightIndex) {
         int leftIndex = rollPosition(rightIndex + rightToLeftShifts.get(rollPosition(rightIndex + position - ringSetting)));
+//        System.out.println("RIndex " + rightIndex + " with position " + position + " and ring setting " + ringSetting);
+//        int sRightIndex = rightIndex + position - ringSetting;
+//        System.out.println("sRightIndex is " + sRightIndex);
+//        int rolledSRightIndex = rollPosition(sRightIndex);
+//        System.out.println("rolled is " + rolledSRightIndex);
+//        int shift = rightToLeftShifts.get(rolledSRightIndex);
+//        System.out.println("Shift is " + shift);
+//        int total = sRightIndex + shift;
+//        System.out.println("Total " + total);
+//        int rollTotal = rollPosition(total);
+//        System.out.println("roleld total is " + rollTotal + "\n\n\n");
+//        //int leftIndex = rollPosition(rightIndex + position - ringSetting + rightToLeftShifts.get(rollPosition(rightIndex + position - ringSetting)));
+//        int leftIndex = rollTotal;
         return leftIndex;
     }
     
@@ -56,17 +71,28 @@ public class Rotor {
         this.ringSetting = position;
     }
     
+    public void setTurnoverPoint(int point) {
+        this.turnoverPoint = point;
+    }
+    
     /**
      * Rotates the rotor one position.
      * @return true if this should trigger the next rotor to rotate.
      */
     public boolean rotate() {
+        boolean turnover = false;
+        
         position++;
+        
+        if (position == turnoverPoint) {// Only rotate if position is on the turnover point now
+            turnover = true;
+        }               
+        
         if (position > 25) { //TODO Ugly magic number
             position = 0;
-            return true;
         }
-        return false;
+        
+        return turnover;
     }
     
     /**
@@ -82,5 +108,9 @@ public class Rotor {
             rolledPosition += 26;// Ugly magic number
         }
         return rolledPosition;
+    }
+    
+    public boolean isOneAwayFromTurnover() {
+        return rollPosition(position + 1) == turnoverPoint;
     }
 }
