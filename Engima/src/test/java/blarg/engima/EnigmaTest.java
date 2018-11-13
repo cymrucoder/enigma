@@ -283,15 +283,33 @@ public class EnigmaTest {
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
     
-    // Reflector B, rotors III, II, I, code A, D, Q, ring AAA, double step anomoly
+    // Reflector B, rotors I, II, III, code Q, E, V, ring AAA, double step anomoly
     @Test
-    public void testEncrypt_whenRotors321ADQ_shouldDoubleStepAndReturnCiphertext() {
-        setupEnigma("III", "II", "I", ('A' - 'A'), ('D' - 'A'), ('Q' - 'A'));
-        enigma.setRotorTurnoverPoint(0, ('V' - 'A'));
-        enigma.setRotorTurnoverPoint(1, ('E' - 'A'));
-        enigma.setRotorTurnoverPoint(2, ('Q' - 'A'));
+    public void testEncrypt_whenRotors123QEV_shouldDoubleStepAndReturnCiphertext() {
+        setupEnigma("I", "II", "III", ('Q' - 'A'), ('E' - 'A'), ('V' - 'A'));
+        enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(1, 'A' - 'A');
+        enigma.setRotorRingSetting(2, 'A' - 'A');
+        enigma.setRotorTurnoverPoint(0, ('R' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('W' - 'A'));
         String plaintext = "AAAA";
-        String expectedCiphertext = "ZGOV";
+        String expectedCiphertext = "LNPJ";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+        // Reflector B, rotors III, II, I, code V, E, Q, ring AAA, double step anomoly
+    @Test
+    public void testEncrypt_whenRotors321VEQ_shouldDoubleStepAndReturnCiphertext() {
+        setupEnigma("III", "II", "I", ('V' - 'A'), ('E' - 'A'), ('Q' - 'A'));
+        enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(1, 'A' - 'A');
+        enigma.setRotorRingSetting(2, 'A' - 'A');
+        enigma.setRotorTurnoverPoint(0, ('W' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('R' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "ZUSW";
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
 }
