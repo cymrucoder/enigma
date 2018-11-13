@@ -44,13 +44,27 @@ public class Rotor {
 //        System.out.println("rolled is " + rolledSRightIndex);
 //        int shift = rightToLeftShifts.get(rolledSRightIndex);
 //        System.out.println("Shift is " + shift);
-//        int total = sRightIndex + shift;
+//        int total = rolledSRightIndex + shift;
 //        System.out.println("Total " + total);
 //        int rollTotal = rollPosition(total);
 //        System.out.println("roleld total is " + rollTotal + "\n\n\n");
 //        //int leftIndex = rollPosition(rightIndex + position - ringSetting + rightToLeftShifts.get(rollPosition(rightIndex + position - ringSetting)));
 //        int leftIndex = rollTotal;
 // This is missing the rightindex+position+ringsetting at the start in the uncommented one which I think is correct but breaks tests
+// Okay maybe that is wrong actually
+//       System.out.println("RIndex " + rightIndex + " with position " + position + " and ring setting " + ringSetting);
+//        int sRightIndex = rightIndex + position - ringSetting;
+//        System.out.println("sRightIndex is " + sRightIndex);
+//        int rolledSRightIndex = rollPosition(sRightIndex);
+//        System.out.println("rolled is " + rolledSRightIndex);
+//        int shift = rightToLeftShifts.get(rolledSRightIndex);
+//        System.out.println("Shift is " + shift);
+//        int total = rightIndex + shift;
+//        System.out.println("Total " + total);
+//        int rollTotal = rollPosition(total);
+//        System.out.println("roleld total is " + rollTotal + "\n\n\n");
+//        //int leftIndex = rollPosition(rightIndex + position - ringSetting + rightToLeftShifts.get(rollPosition(rightIndex + position - ringSetting)));
+//        int leftIndex = rollTotal;
         return leftIndex;
     }
     
