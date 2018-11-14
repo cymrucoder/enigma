@@ -43,12 +43,25 @@ public class Enigma {
     }
     
     public void clearRotors() {
+        for (int i = setRotors.size() - 1; i >= 0; i--) {
+            ((Rotor) rotors.get(setRotors.get(i))).setPosition(0);
+            ((Rotor) rotors.get(setRotors.get(i))).setRingSetting(0);
+        }
         setRotors.clear();
     }
     
     public void setRotorRotation(int index, int position) {
         rotors.get(setRotors.get(index)).setPosition(position);
     }
+    
+    public void setRotorRingSetting(int index, int position) {
+        rotors.get(setRotors.get(index)).setRingSetting(position);
+    }
+    
+    public void setRotorTurnoverPoint(int index, int point) {
+        rotors.get(setRotors.get(index)).setTurnoverPoint(point);
+    }
+    
     
     public void setReflector(String cipher) {
         reflector = new Rotor(cipher);
@@ -96,7 +109,13 @@ public class Enigma {
     
     private void turnRotors() {
         for (int i = setRotors.size() - 1; i >= 0; i--) {
-            if (((Rotor) rotors.get(setRotors.get(i))).rotate() == false) {
+            boolean shouldTurnover = ((Rotor) rotors.get(setRotors.get(i))).rotate();
+            if (!shouldTurnover) {
+                if (i != 0 && i != setRotors.size() - 1 && ((Rotor) rotors.get(setRotors.get(i))).isOneAwayFromTurnover()) {
+                    shouldTurnover = ((Rotor) rotors.get(setRotors.get(i))).rotate();
+                }                
+            }
+            if (!shouldTurnover) {
                 break;
             }
         }
