@@ -51,6 +51,9 @@ public class EnigmaTest {
         setupEnigma("I", "II", "III", 0, 0, 0);        
         String plaintext = "AAAA";
         String expectedCiphertext = "BDZG";
+        enigma.setRotorTurnoverPoint(0, ('R' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('W' - 'A'));
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
     
@@ -73,31 +76,48 @@ public class EnigmaTest {
     }
     
     // Reflector B, rotors I, II, III, code A, A, X
+    // I can't compare this to online enigma simulators because I can't set the custom turnover points (I think these were all assumed to be 0, which isn't realistic, but I might fix it at some point)
+//    @Test
+//    public void testEncrypt_whenRightRotorRollsover_shouldReturnCiphertext() {
+//        setupEnigma("I", "II", "III", ('A' - 'A'), ('A' - 'A'), ('X' - 'A'));
+//        String plaintext = "AAAA";
+//        String expectedCiphertext = "BOXY";
+//        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+//    }
+    
     @Test
     public void testEncrypt_whenRightRotorRollsover_shouldReturnCiphertext() {
-        setupEnigma("I", "II", "III", ('A' - 'A'), ('A' - 'A'), ('X' - 'A'));
+        setupEnigma("I", "II", "III", ('A' - 'A'), ('A' - 'A'), ('U' - 'A'));
+        enigma.setRotorTurnoverPoint(0, ('R' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('W' - 'A'));
         String plaintext = "AAAA";
-        String expectedCiphertext = "BOXY";
+        String expectedCiphertext = "MUQO";
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
     
     // Reflector B, rotors I, II, III, code A, Z, X
-    @Test
-    public void testEncrypt_whenTwoRotorsRollover_shouldReturnCiphertext() {
-        setupEnigma("I", "II", "III", ('A' - 'A'), ('Z' - 'A'), ('X' - 'A'));
-        String plaintext = "AAAA";
-        String expectedCiphertext = "KGPE";
-        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
-    }
+    // I can't compare this to online enigma simulators because I can't set the custom turnover points (I think these were all assumed to be 0, which isn't realistic, but I might fix it at some point)
+//    @Test
+//    public void testEncrypt_whenTwoRotorsRollover_shouldReturnCiphertext() {
+//        setupEnigma("I", "II", "III", ('A' - 'A'), ('Z' - 'A'), ('X' - 'A'));
+//        enigma.setRotorTurnoverPoint(0, 0);
+//        enigma.setRotorTurnoverPoint(1, 0);
+//        enigma.setRotorTurnoverPoint(2, 0);
+//        String plaintext = "AAAA";
+//        String expectedCiphertext = "KGPE";
+//        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+//    }
     
     // Reflector B, rotors I, II, III, code Z, Z, X
-    @Test
-    public void testEncrypt_whenThreeRotorsRollover_shouldReturnCiphertext() {
-        setupEnigma("I", "II", "III", ('Z' - 'A'), ('Z' - 'A'), ('X' - 'A'));
-        String plaintext = "AAAA";
-        String expectedCiphertext = "XXUB";
-        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
-    }
+    // I can't compare this to online enigma simulators because I can't set the custom turnover points (I think these were all assumed to be 0, which isn't realistic, but I might fix it at some point)
+//    @Test
+//    public void testEncrypt_whenThreeRotorsRollover_shouldReturnCiphertext() {
+//        setupEnigma("I", "II", "III", ('Z' - 'A'), ('Z' - 'A'), ('X' - 'A'));
+//        String plaintext = "AAAA";
+//        String expectedCiphertext = "XXUB";
+//        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+//    }
     
     // Reflector B, rotors I, III, II, code A, A, A
     @Test
@@ -118,13 +138,14 @@ public class EnigmaTest {
     }
     
     // Reflector B, rotors I, III, II, code A, A, A
-    @Test
-    public void testEncypt_whenThreeRotorsSwappedAndThreeRollovers_shouldReturnCiphertext() {
-        setupEnigma("III", "I", "II", ('Z' - 'A'), ('Z' - 'A'), ('X' - 'A'));
-        String plaintext = "AAAA";
-        String expectedCiphertext = "ZUJC";
-        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
-    }
+    // I can't compare this to online enigma simulators because I can't set the custom turnover points (I think these were all assumed to be 0, which isn't realistic, but I might fix it at some point)
+//    @Test
+//    public void testEncypt_whenThreeRotorsSwappedAndThreeRollovers_shouldReturnCiphertext() {
+//        setupEnigma("III", "I", "II", ('Z' - 'A'), ('Z' - 'A'), ('X' - 'A'));
+//        String plaintext = "AAAA";
+//        String expectedCiphertext = "ZUJC";
+//        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+//    }
     
     // Reflector C, rotors I, II, III, code A, A, A
     @Test
@@ -174,6 +195,121 @@ public class EnigmaTest {
         enigma.connectPlugboard(('A' - 'A'), ('C' - 'A'));
         plaintext = "AAAA";
         expectedCiphertext = "NMCJ";// Remember that the rotors have already turned four times before doing this!  Because I forgot it before ;)
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code A, A, A, ring AAA
+    @Test
+    public void testEncrypt_whenRotorsAAARingAAA_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0);        
+        String plaintext = "AAAA";
+        String expectedCiphertext = "BDZG";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code A, A, A, ring AAB
+    @Test
+    public void testEncrypt_whenRotorsAAARingAAB_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0);
+        enigma.setRotorRingSetting(2, 'B' - 'A');
+        String plaintext = "AAAA";
+        String expectedCiphertext = "UBDZ";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code A, A, A, ring AAZ
+    @Test
+    public void testEncrypt_whenRotorsAAARingAAZ_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, 0);
+        //enigma.setRotorRingSetting(0, 'A' - 'A');
+        //enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(2, 'Z' - 'A');
+        String plaintext = "AAAA";
+        String expectedCiphertext = "DZGO";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code E, H, K
+    @Test
+    public void testEncrypt_whenRotorsEHKRingABC_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", ('E' - 'A'), ('H' - 'A'), ('K' - 'A'));
+        enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(1, 'B' - 'A');
+        enigma.setRotorRingSetting(2, 'C' - 'A');
+        String plaintext = "AAAA";
+        String expectedCiphertext = "QRNQ";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code A, A, V, turnover should occur on first press
+    @Test
+    public void testEncrypt_whenRotorsAAV_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, ('V' - 'A'));
+        enigma.setRotorTurnoverPoint(0, ('R' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('W' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "UQOF";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code A, A, U, ring AAU, turnover should occur on first press
+    @Test
+    public void testEncrypt_whenRotorsAAARingAAV_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", 0, 0, ('U' - 'A'));
+        enigma.setRotorTurnoverPoint(0, ('R' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('W' - 'A'));
+        enigma.setRotorRingSetting(0, ('A' - 'A'));
+        enigma.setRotorRingSetting(1, ('A' - 'A'));
+        enigma.setRotorRingSetting(2, ('U' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "BHCX";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code Q, E, V, ring ABC, turnover should occur on first press
+    @Test
+    public void testEncrypt_whenRotorsQEVRingAAV_shouldReturnCiphertext() {
+        setupEnigma("I", "II", "III", ('A' - 'A'), ('A' - 'A'), ('U' - 'A'));
+        enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(1, 'B' - 'A');
+        enigma.setRotorRingSetting(2, 'C' - 'A');
+        enigma.setRotorTurnoverPoint(0, ('R' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('W' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "LBMF";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+    // Reflector B, rotors I, II, III, code Q, E, V, ring AAA, double step anomoly
+    @Test
+    public void testEncrypt_whenRotors123QEV_shouldDoubleStepAndReturnCiphertext() {
+        setupEnigma("I", "II", "III", ('Q' - 'A'), ('E' - 'A'), ('V' - 'A'));
+        enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(1, 'A' - 'A');
+        enigma.setRotorRingSetting(2, 'A' - 'A');
+        enigma.setRotorTurnoverPoint(0, ('R' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('W' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "LNPJ";
+        assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
+    }
+    
+        // Reflector B, rotors III, II, I, code V, E, Q, ring AAA, double step anomoly
+    @Test
+    public void testEncrypt_whenRotors321VEQ_shouldDoubleStepAndReturnCiphertext() {
+        setupEnigma("III", "II", "I", ('V' - 'A'), ('E' - 'A'), ('Q' - 'A'));
+        enigma.setRotorRingSetting(0, 'A' - 'A');
+        enigma.setRotorRingSetting(1, 'A' - 'A');
+        enigma.setRotorRingSetting(2, 'A' - 'A');
+        enigma.setRotorTurnoverPoint(0, ('W' - 'A'));
+        enigma.setRotorTurnoverPoint(1, ('F' - 'A'));
+        enigma.setRotorTurnoverPoint(2, ('R' - 'A'));
+        String plaintext = "AAAA";
+        String expectedCiphertext = "ZUSW";
         assertEquals(expectedCiphertext, enigma.encrypt(plaintext));
     }
 }
